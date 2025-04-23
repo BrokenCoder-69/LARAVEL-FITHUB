@@ -4,6 +4,7 @@ use App\Http\Controllers\AppoinmentController;
 use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\AuthController;
+use App\Http\Controllers\GymController;
 use App\Http\Controllers\SeminarController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\TrainerMiddleware;
@@ -37,6 +38,7 @@ Route::middleware('auth:sanctum')->group(function () {
 });
 
 
+Route::post('/find_nearest_gyms', [GymController::class, 'findNearestGyms']);
 
 
 
