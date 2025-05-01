@@ -1,0 +1,73 @@
+/* Global Styles */
+body {
+    background-color: #f8f9fa;
+    font-family: Arial, sans-serif;
+}
+
+/* Sidebar Styles */
+.sidebar {
+    height: 100vh;
+    background: #343a40;
+    padding-top: 20px;
+    width: 250px;
+    position: fixed;
+}
+
+.sidebar a {
+    color: #fff;
+    padding: 10px;
+    display: block;
+    text-decoration: none;
+    border-radius: 5px;
+    margin-bottom: 10px;
+}
+
+.sidebar a:hover {
+    background: #495057;
+}
+
+/* Main Content Area */
+.content {
+    margin-left: 260px;
+    padding: 20px;
+}
+
+.card {
+    border-radius: 10px;
+    box-shadow: 0px 4px 6px rgba(0, 0, 0, 0.1);
+    margin-bottom: 20px;
+}
+
+.card img {
+    border-radius: 10px;
+}
+
+.card-body {
+    padding: 15px;
+}
+
+.card-title {
+    font-size: 1.25rem;
+    font-weight: bold;
+}
+
+.card-text {
+    color: #6c757d;
+}
+
+/* Button Styles */
+button {
+    border-radius: 5px;
+}
+
+/* Product List Page */
+#product-list {
+    display: grid;
+    grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+    gap: 20px;
+}
+
+.card-title, .card-text {
+    text-align: center;
+}
+
