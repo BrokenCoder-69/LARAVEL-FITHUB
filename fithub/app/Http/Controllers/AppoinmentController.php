@@ -20,10 +20,4 @@ class AppoinmentController extends Controller
         return response()->json($appointment, 201);
     }
 
-
-    public function trainer(Request $request){
-        $trainers = User::where('role', 'trainer')->select('id', 'name')->get();
-
-        return response()->json($trainers);
-    }
 }

@@ -21,6 +21,7 @@ return new class extends Migration
             $table->dateTime('date_time');
             $table->enum('format', ['online', 'offline']);
             $table->string('location')->nullable();
+            $table->boolean('accepted')->nullable()->default(false);
             $table->timestamps();
             $table->foreign('user_id')->references('id')->on('users');
             $table->foreign('trainer_id')->references('id')->on('users');

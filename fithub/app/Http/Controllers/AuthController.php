@@ -56,7 +56,11 @@ class AuthController extends Controller
         ]);
 
         $user = User::where('email', $request->email)->first();
-
+        if ($user->status == 'pending' && $user->role == 'trainer') {
+            return response()->json([
+                'message' => 'Try again later'
+            ], 403);
+        }
         if (!$user || !Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages(['email' => 'Invalid credentials']);
         }

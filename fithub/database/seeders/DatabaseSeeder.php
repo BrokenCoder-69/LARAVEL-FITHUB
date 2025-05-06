@@ -21,24 +21,28 @@ class DatabaseSeeder extends Seeder
             'name' => 'Test User',
             'email' => 'test@example.com',
             'password' => 'qwer',
+            'status' => 'approved',
             'role' => 'user'
         ]);
         User::factory()->create([
             'name' => 'admin',
             'email' => 'admin@example.com',
             'password' => 'admin12345',
+            'status' => 'approved',
             'role' => 'admin'
         ]);
         User::factory()->create([
             'name' => 'trainer1',
             'email' => 'trainer1@example.com',
             'password' => '123456',
+            'status' => 'approved',
             'role' => 'trainer'
         ]);
         User::factory()->create([
             'name' => 'trainer2',
             'email' => 'trainer2@example.com',
             'password' => '123456',
+            'status' => 'approved',
             'role' => 'trainer'
         ]);
     }
