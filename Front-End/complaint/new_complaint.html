@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Submit New Complaint</title>
+</head>
+<body>
+    <h1>Submit a New Complaint</h1>
+    
+    <form id="complaintForm">
+        <label for="complaint">Complaint:</label>
+        <textarea id="complaint" name="complaint" rows="4" cols="50" required></textarea><br>
+        
+        <button type="submit">Submit Complaint</button>
+    </form>
+
+    <div id="responseMessage"></div>
+
+    <script>
+        document.getElementById('complaintForm').addEventListener('submit', async function (event) {
+            event.preventDefault();
+
+            const complaint = document.getElementById('complaint').value;
+            const apiUrl = 'http://localhost/api/complaints';  // Adjust the URL based on your backend
+
+            try {
+                const response = await fetch(apiUrl, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                    },
+                    body: JSON.stringify({ complaint })
+                });
+
+                const data = await response.json();
+
+                console.log("API Response:", data);  // Log the response from the API
+
+                if (response.ok) {
+                    document.getElementById('responseMessage').textContent = 'Complaint submitted successfully!';
+                    
+                    // Redirect to All Complaints page after submission
+                    setTimeout(() => {
+                        window.location.href = 'all_complaints.html';  // Adjust the redirect URL if necessary
+                    }, 2000); // Redirect after 2 seconds
+                } else {
+                    document.getElementById('responseMessage').textContent = `Error: ${data.message}`;
+                }
+            } catch (error) {
+                document.getElementById('responseMessage').textContent = 'Error submitting the complaint. Please try again.';
+                console.error('Error:', error); // Log any JavaScript errors
+            }
+        });
+    </script>
+</body>
+</html>
+
+
+<script>
+    document.getElementById('complaintForm').addEventListener('submit', async function (event) {
+        event.preventDefault();
+
+        const complaint = document.getElementById('complaint').value;
+        const apiUrl = 'http://localhost/api/complaints';  // Adjust the URL based on your backend
+
+        try {
+            const response = await fetch(apiUrl, {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ complaint })
+            });
+
+            // Log the response for debugging
+            const data = await response.json();
+            console.log("API Response:", data);
+
+            if (response.ok) {
+                document.getElementById('responseMessage').textContent = 'Complaint submitted successfully!';
+                // Redirect to All Complaints page after submission
+                setTimeout(() => {
+                    window.location.href = 'all_complaints.html';  // Adjust the redirect URL if necessary
+                }, 2000); // Redirect after 2 seconds
+            } else {
+                document.getElementById('responseMessage').textContent = `Error: ${data.message || 'Unknown error'}`;
+            }
+        } catch (error) {
+            document.getElementById('responseMessage').textContent = 'Error submitting the complaint. Please try again.';
+            console.error('Error:', error); // Log any JavaScript errors
+        }
+    });
+</script>

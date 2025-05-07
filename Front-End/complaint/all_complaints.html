@@ -1,0 +1,56 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Complaints</title>
+</head>
+<body>
+    <h1>All Complaints</h1>
+
+    <div id="complaints-list">
+        <!-- Complaints will be dynamically loaded here -->
+    </div>
+
+    <br>
+    <button onclick="window.location.href='new_complaint.html'">Submit New Complaint</button>
+
+    <script>
+        // Fetch complaints from the backend API
+        async function fetchComplaints() {
+            const apiUrl = 'http://localhost/api/complaints';  // Adjust the URL based on your backend
+            
+            try {
+                const response = await fetch(apiUrl);
+                const complaints = await response.json();
+
+                const complaintsList = document.getElementById('complaints-list');
+                complaintsList.innerHTML = '';  // Clear any previous content
+
+                complaints.forEach(complaint => {
+                    const complaintDiv = document.createElement('div');
+                    complaintDiv.classList.add('complaint');
+                    
+                    // Create complaint text and status
+                    const complaintText = document.createElement('p');
+                    complaintText.textContent = `Complaint: ${complaint.complaint}`;
+                    complaintDiv.appendChild(complaintText);
+
+                    const complaintStatus = document.createElement('p');
+                    complaintStatus.textContent = `Status: ${complaint.status}`;
+                    complaintDiv.appendChild(complaintStatus);
+
+                    // Append to complaints list
+                    complaintsList.appendChild(complaintDiv);
+                });
+            } catch (error) {
+                console.error('Error fetching complaints:', error);
+                document.getElementById('complaints-list').textContent = 'Failed to load complaints. Please try again later.';
+            }
+        }
+
+        // Fetch complaints when the page loads
+        window.onload = fetchComplaints;
+    </script>
+</body>
+</html>

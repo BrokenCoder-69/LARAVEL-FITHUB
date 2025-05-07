@@ -63,28 +63,59 @@
                 <div class="card-body">
                     <h5 class="card-title text-xl font-bold text-gray-800">${product.name}</h5>
                     <p class="card-text text-gray-600 mb-2">${product.description}</p>
-                    <p class="card-text font-semibold text-gray-900 mb-4">$${product.price}</p>
+                    <p class="card-text font-semibold text-gray-900 mb-4" id="product-price">$${product.price}</p>
                     <p class="card-text text-gray-700 mb-4">Category: ${product.category}</p>
                     <p class="card-text text-gray-700 mb-4">Stock Quantity: ${product.stock_quantity}</p>
                 </div>
             `;
         }
 
-        // Add product to the cart (simple localStorage cart logic)
+        // Add product to the cart and order_items table
         document.getElementById('add-to-cart-btn').addEventListener('click', function () {
             const cart = JSON.parse(localStorage.getItem('cart')) || [];
+
+            // Get product details
+            const productName = document.querySelector('.card-title').textContent;
+            const productPrice = document.getElementById('product-price').textContent.match(/\$([0-9.]+)/)[0]; // Extract price
+            const quantity = 1;
 
             // Add the current product to the cart
             cart.push({
                 product_id: productId,
-                name: document.querySelector('.card-title').textContent,
-                price: document.querySelector('.card-text').textContent.match(/\$([0-9.]+)/)[0], // Extract price
-                quantity: 1,
+                name: productName,
+                price: productPrice,
+                quantity: quantity,
             });
 
             // Save the updated cart to localStorage
             localStorage.setItem('cart', JSON.stringify(cart));
-            alert('Product added to cart!');
+
+            // Send the product data to the backend to store it in the `order_items` table
+            fetch('http://127.0.0.1:8000/api/order-items', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                    'Accept': 'application/json'
+                },
+                body: JSON.stringify({
+                    product_id: productId,
+                    quantity: quantity,
+                    price: productPrice.replace('$', '')
+                })
+            })
+            .then(response => response.json())
+            .then(data => {
+                if (data.success) {
+                    alert('Product added to cart and order_items table!');
+                    window.location.href = 'cart.html';  // Redirect to cart page
+                } else {
+                    alert('Failed to add product to order_items table.');
+                }
+            })
+            .catch(error => {
+                console.error('Error adding to order_items:', error);
+                alert('There was an error. Please try again.');
+            });
         });
 
         // Fetch product details when the page loads

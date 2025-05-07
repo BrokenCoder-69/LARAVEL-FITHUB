@@ -30,7 +30,7 @@
 
             <div class="mt-3">
                 <h3>Total: <span id="total-price">$0.00</span></h3>
-                <button class="btn btn-success w-100" onclick="checkout()">Checkout</button>
+                <button class="btn btn-success w-100" onclick="checkout()">Proceed to Checkout</button>
             </div>
         </main>
     </div>
@@ -39,7 +39,7 @@
         // Retrieve cart data from localStorage (or initialize an empty array if not found)
         let cart = JSON.parse(localStorage.getItem('cart')) || []; 
 
-        // Display the cart items in the checkout page
+        // Display the cart items in the cart page
         function displayCartItems() {
             const cartItemsContainer = document.getElementById('cart-items');
             cartItemsContainer.innerHTML = '';  // Clear current items
@@ -48,13 +48,16 @@
 
             // Loop through the cart to display each item
             cart.forEach((product, index) => {
-                totalPrice += parseFloat(product.price.replace('$', ''));  // Remove dollar sign and convert to number
+                const productPrice = parseFloat(product.price.replace('$', '')); // Remove dollar sign and convert to number
+                const productTotal = productPrice * product.quantity; // Total for this product
+
+                totalPrice += productTotal;  // Update the total price
 
                 const cartItem = `
                     <div class="card mb-2">
                         <div class="card-body">
                             <h5 class="card-title">${product.name}</h5>
-                            <p class="card-text">$${product.price}</p>
+                            <p class="card-text">$${product.price} x ${product.quantity} = $${productTotal.toFixed(2)}</p>
                             <button class="btn btn-danger" onclick="removeFromCart(${index})">Remove</button>
                         </div>
                     </div>

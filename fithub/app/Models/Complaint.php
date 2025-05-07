@@ -2,35 +2,15 @@
 
 namespace App\Models;
 
+use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
 class Complaint extends Model
 {
-    // Define fillable attributes to protect against mass-assignment vulnerability
-    protected $fillable = [
-        'complaint',  // Complaint content/description
-        'status',     // Status of the complaint (pending, resolved)
-        'user_id',    // The ID of the user who submitted the complaint
-    ];
+    use HasFactory;
 
-    // Set the table name if it's not 'complaints'
-    protected $table = 'complaints';
+    // Define the columns that are mass-assignable
+    protected $fillable = ['complaint', 'status'];
 
-    // Default status is 'pending' when a complaint is created
-    protected static function boot()
-    {
-        parent::boot();
-
-        static::creating(function ($complaint) {
-            if (empty($complaint->status)) {
-                $complaint->status = 'pending'; // Default to 'pending'
-            }
-        });
-    }
-
-    // Define the relationship between Complaints and Users
-    public function user()
-    {
-        return $this->belongsTo(User::class);
-    }
+    // Optionally, you can define relationships here (if needed in the future)
 }
