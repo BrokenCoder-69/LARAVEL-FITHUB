@@ -70,4 +70,18 @@ class User extends Authenticatable
     {
         return $this->hasMany(Seminar::class, 'trainer_id');
     }
+     public function givenReviews()
+    {
+        return $this->hasMany(Review::class, 'user_id');
+    }
+    
+    public function receivedReviews()
+    {
+        return $this->hasMany(Review::class, 'trainer_id');
+    }
+    
+    public function averageRating()
+    {
+        return $this->receivedReviews()->avg('rating');
+    }
 }
