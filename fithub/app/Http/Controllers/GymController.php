@@ -10,7 +10,13 @@ class GymController extends Controller
     //
     public function findNearestGyms(Request $request)
     {
-        $ip = "103.67.66.0";
+        $ip = request()->ip();
+
+        // Check for proxies or load balancers
+        if (request()->server('HTTP_X_FORWARDED_FOR')) {
+            $ip = explode(',', request()->server('HTTP_X_FORWARDED_FOR'))[0];
+        }
+    
         $url = "http://ip-api.com/json/$ip";
 
         $locationData = json_decode(file_get_contents($url), true);

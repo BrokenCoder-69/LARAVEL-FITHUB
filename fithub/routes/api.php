@@ -17,29 +17,28 @@ Route::post('/login', [AuthController::class, 'login']);
 
 Route::middleware('auth:sanctum')->group(function () {
     Route::post('/logout', [AuthController::class, 'logout']);
-    Route::middleware('auth:sanctum')->group(function () {
-        Route::get('/user/dashboard', function () {
-            return response()->json(['message' => 'User Dashboard']);
-        });
-        Route::post('/appointments', [AppoinmentController::class,'book']);
-        Route::post('/seminar/store', [SeminarController::class,'book']);
+    Route::get('/seminars', [UserController::class, 'seminar']);
 
-    });
+    Route::post('/appointments', [AppoinmentController::class, 'book']);
+    Route::post('/seminar/store', [SeminarController::class, 'book']);
 });
 
 Route::middleware('auth:sanctum', TrainerMiddleware::class)->group(function () {
     Route::get('/trainer/dashboard', function () {
         return response()->json(['message' => 'Trainer Dashboard']);
     });
-    Route::get('/trainer/seminar', [SeminarController::class, 'trainer_index']);
+    Route::get('/trainer/seminar/index', [SeminarController::class, 'trainer_index']);
     Route::get('/trainer/seminar/{id}', [SeminarController::class, 'show']);
-    Route::post('/trainer/seminar/{id}', [SeminarController::class, 'seminar_accept']);
+    Route::post('/trainer/seminar/approve/{id}', [SeminarController::class, 'seminar_accept']);
+    Route::get('/seminar/pending', [TrainerController::class, 'seminar_is_pending']);
 });
 
 Route::middleware('auth:sanctum', AdminMiddleware::class)->group(function () {
     Route::get('/admin/dashboard', function () {
         return response()->json(['message' => 'Admin Dashboard']);
     });
+    Route::get('/admin/count/user', [AdminController::class, 'user_count']);
+    Route::get('/admin/count/trainer', [AdminController::class, 'trainer_count']);
     Route::get('/admin/users', [UserController::class, 'index']);
     Route::get('/admin/user/{id}', [UserController::class, 'show']);
     Route::put('/admin/user/{id}', [UserController::class, 'update']);

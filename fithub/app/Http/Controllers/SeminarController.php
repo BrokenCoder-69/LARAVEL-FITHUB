@@ -28,9 +28,10 @@ class SeminarController extends Controller
     public function trainer_index(Request $request)
     {
         $user_id = Auth::id();
-        $appointments = Seminar::where('trainer_id', $user_id)->orderBy('created_at', 'desc')->get();
+        $appointments = Seminar::where('trainer_id', $user_id)->where('accepted', 1)->orderBy('created_at', 'desc')->get();
         return response()->json($appointments, 200);
     }
+    
 
     public function user_index(Request $request)
     {
@@ -43,7 +44,7 @@ class SeminarController extends Controller
     {
         $appointment = Seminar::find($id);
         if (!$appointment) {
-            return response()->json(['message' => 'Appointment not found'], 404);
+            return response()->json(['message' => 'Seminar not found'], 404);
         }
         return response()->json($appointment, 200);
     }

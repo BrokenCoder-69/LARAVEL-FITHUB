@@ -36,43 +36,27 @@
 
         <!-- Cards -->
         <div class="row">
-            <div class="col-md-3">
-                <div class="card text-white bg-primary shadow">
-                    <div class="card-body">
-                        <h5 class="card-title">Users</h5>
-                        <p class="card-text">Total: 120</p>
-                    </div>
-                </div>
+          <div class="col-md-3">
+            <div class="card text-white bg-primary shadow">
+              <div class="card-body">
+                <h5 class="card-title">Users</h5>
+                <p class="card-text">Total: <span id="userCount">Loading...</span></p>
+              </div>
             </div>
-            <div class="col-md-3">
-                <div class="card text-white bg-success shadow">
-                    <div class="card-body">
-                        <h5 class="card-title">Trainers</h5>
-                        <p class="card-text">Total: 35</p>
-                    </div>
-                </div>
+          </div>
+          
+          <div class="col-md-3">
+            <div class="card text-white bg-success shadow">
+              <div class="card-body">
+                <h5 class="card-title">Trainers</h5>
+                <p class="card-text">Total: <span id="trainerCount">Loading...</span></p>
+              </div>
             </div>
-            <div class="col-md-3">
-                <div class="card text-white bg-danger shadow">
-                    <div class="card-body">
-                        <h5 class="card-title">Admins</h5>
-                        <p class="card-text">Total: 5</p>
-                    </div>
-                </div>
-            </div>
-            <div class="col-md-3">
-                <div class="card text-white bg-warning shadow">
-                    <div class="card-body">
-                        <h5 class="card-title">Total Earnings</h5>
-                        <p class="card-text">$45,000</p>
-                    </div>
-                </div>
-            </div>
+          </div>
         </div>
         <div class="table-container">
             <div class="text-center mb-4">
-              <h2 class="text-3xl font-bold text-blue-600">Registered Users</h2>
-              <p class="text-gray-600 mt-2">Fetched live from Laravel API</p>
+              <h2 class="text-3xl font-bold text-blue-600">Application for trainer</h2>
             </div>
       
             <div class="overflow-auto rounded-lg shadow-lg">
@@ -102,89 +86,119 @@
 
 <!-- Chart Script -->
 <script>
-    document.addEventListener('DOMContentLoaded', function () {
-        var ctx = document.getElementById('dashboardChart').getContext('2d');
-        new Chart(ctx, {
-            type: 'bar',
-            data: {
-                labels: ['Users', 'Trainers', 'Admins'],
-                datasets: [{
-                    label: 'Total Count',
-                    data: [120, 35, 5],
-                    backgroundColor: ['blue', 'green', 'red'],
-                }]
-            }
-        });
-    });
-</script>
-<script>
-    const tableBody = document.getElementById("userTableBody");
-    tableBody.innerHTML = '<tr><td colspan="3">Loading...</td></tr>';
+  document.addEventListener("DOMContentLoaded", async function () {
     const token = localStorage.getItem("token");
+    const userCountSpan = document.getElementById("userCount");
+    const trainerCountSpan = document.getElementById("trainerCount");
+    const tableBody = document.getElementById("userTableBody");
+
+    let userCount = 0;
+    let trainerCount = 0;
+    let adminCount = 0; // Static for now
+
+    // Fetch user count
     try {
-      fetch("http://localhost:8000/api/pending/trainers", {
-        method: "GET",
+      const userRes = await fetch("http://127.0.0.1:8000/api/admin/count/user", {
         headers: {
           Authorization: `Bearer ${token}`,
           Accept: "application/json",
         },
-      })
-        .then((response) => {
-          if (!response.ok) {
-            throw new Error("HTTP error " + response.status);
-          }
-          console.log(response);
-          return response.json();
-        })
-        .then((data) => {
-          if (data.length === 0) {
-            tableBody.innerHTML =
-              '<tr><td colspan="3">No users found</td></tr>';
-          } else {
-            tableBody.innerHTML = "";
-            data.forEach((user) => {
-              const row = `
-              <tr>
-                <td>${user.name}</td>
-                <td>${new Date(user.created_at).toLocaleString()}</td>
-                <td>
-    
-                  <button class="btn btn-sm btn-primary" onclick="approveTrainer('${
-                    user.id
-                  }')">Approve</button>
-                </td>
-              </tr>
-            `;
-              tableBody.innerHTML += row;
-            });
-          }
-        });
-    } catch (error) {
-      tableBody.innerHTML = `<tr><td colspan="3" class="text-danger">Failed to load users</td></tr>`;
-      console.error("Fetch error:", error);
+      });
+      if (!userRes.ok) throw new Error("User count fetch failed");
+      userCount = await userRes.json();
+      userCountSpan.textContent = userCount;
+    } catch (err) {
+      console.error("User count error:", err);
+      userCountSpan.textContent = "Error";
     }
 
-  window.addEventListener("DOMContentLoaded", function () {
-    fetchUsers();
-  });
-  function approveTrainer(id) {
-          fetch(`http://localhost:8000/api/approve/trainer/${id}`, {
-            method: "POST",
-            headers: {
-              Authorization: `Bearer ${localStorage.getItem("token")}`,
-              Accept: "application/json",
-            },
-          })
-            .then((res) => {
-              if (!res.ok) throw new Error("Failed to Approve Trainer");
-              return res.json();
-            })
-            .then((data) => {
-              alert("Trainer Approved successfully.");
-              window.location.href = "login.html";
-            })
+    // Fetch trainer count
+    try {
+      const trainerRes = await fetch("http://127.0.0.1:8000/api/admin/count/trainer", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      });
+      if (!trainerRes.ok) throw new Error("Trainer count fetch failed");
+      trainerCount = await trainerRes.json();
+      trainerCountSpan.textContent = trainerCount;
+    } catch (err) {
+      console.error("Trainer count error:", err);
+      trainerCountSpan.textContent = "Error";
+    }
+
+    // Render Chart with dynamic data
+    const ctx = document.getElementById("dashboardChart").getContext("2d");
+    new Chart(ctx, {
+      type: "bar",
+      data: {
+        labels: ["Users", "Trainers"],
+        datasets: [{
+          label: "Total Count",
+          data: [userCount, trainerCount],
+          backgroundColor: ["blue", "green"],
+        }],
+      },
+    });
+
+    // Load pending trainers
+    tableBody.innerHTML = '<tr><td colspan="3">Loading...</td></tr>';
+    try {
+      const pendingRes = await fetch("http://localhost:8000/api/pending/trainers", {
+        headers: {
+          Authorization: `Bearer ${token}`,
+          Accept: "application/json",
+        },
+      });
+      if (!pendingRes.ok) throw new Error("Pending trainers fetch failed");
+      const data = await pendingRes.json();
+
+      if (data.length === 0) {
+        tableBody.innerHTML = '<tr><td colspan="3">No users found</td></tr>';
+      } else {
+        tableBody.innerHTML = "";
+        data.forEach((user) => {
+          tableBody.innerHTML += `
+            <tr>
+              <td>${user.name}</td>
+              <td>${new Date(user.created_at).toLocaleString()}</td>
+              <td>
+                <button class="btn btn-sm btn-primary" onclick="approveTrainer(${user.id})">Approve</button>
+              </td>
+            </tr>`;
+        });
       }
-    </script>
+    } catch (err) {
+      console.error("Trainer fetch error:", err);
+      tableBody.innerHTML = '<tr><td colspan="3" class="text-danger">Failed to load users</td></tr>';
+    }
+  });
+
+  // Approve trainer function
+  function approveTrainer(id) {
+    fetch(`http://localhost:8000/api/approve/trainer/${id}`, {
+      method: "POST",
+      headers: {
+        Authorization: `Bearer ${localStorage.getItem("token")}`,
+        Accept: "application/json",
+      },
+    })
+      .then((res) => {
+        if (!res.ok) throw new Error("Approval failed");
+        return res.json();
+      })
+      .then(() => {
+        alert("Trainer approved successfully.");
+        location.reload();
+      })
+      .catch((err) => {
+        console.error("Approval error:", err);
+        alert("Failed to approve trainer.");
+      });
+  }
 </script>
+
+
 </body>
 </html>

@@ -2,8 +2,10 @@
 
 namespace App\Http\Controllers;
 
+use App\Models\Seminar;
 use App\Models\User;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class TrainerController extends Controller
 {
@@ -59,4 +61,12 @@ class TrainerController extends Controller
         $user->delete();
         return response()->json(['message' => 'Trainer deleted successfully'], 200);
     }
+
+    public function seminar_is_pending(Request $request)
+    {
+        $user_id = Auth::id();
+        $appointments = Seminar::where('trainer_id', $user_id)->where('accepted', 0)->orderBy('created_at', 'desc')->get();
+        return response()->json($appointments, 200);
+    }
+   
 }
