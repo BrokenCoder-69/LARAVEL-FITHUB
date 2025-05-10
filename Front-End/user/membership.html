@@ -1,0 +1,183 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Choose Your Membership Plan</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+
+    <style>
+        .membership-card.active {
+            border: 3px solid #28a745;
+            background-color: #e9f9ee;
+            position: relative;
+        }
+
+        .badge-active {
+            position: absolute;
+            top: 10px;
+            right: 10px;
+            background-color: #28a745;
+            color: white;
+            padding: 5px 10px;
+            font-size: 0.8rem;
+            border-radius: 5px;
+        }
+    </style>
+</head>
+<body class="bg-light p-5">
+
+    <div class="d-flex justify-content-between align-items-center mb-4">
+        <h1>Choose Your Membership Plan</h1>
+        <button onclick="cancelMembership()" class="btn btn-danger">Cancel Membership</button>
+    </div>
+
+    <div id="current-membership" class="mb-4 fs-5 fw-semibold text-primary"></div>
+
+    <div class="row">
+        <!-- Silver Plan -->
+        <div class="col-md-4">
+            <div class="card p-3 shadow-sm membership-card" data-name="Silver">
+                <h4>Silver</h4>
+                <p>BDT500/month</p>
+                <ul>
+                    <li>Basic gym access</li>
+                    <li>2 trainer sessions</li>
+                </ul>
+                <button onclick="goToPayment(1)" class="btn btn-success">Subscribe</button>
+            </div>
+        </div>
+
+        <!-- Gold Plan -->
+        <div class="col-md-4">
+            <div class="card p-3 shadow-sm membership-card" data-name="Gold">
+                <h4>Gold</h4>
+                <p>BDT700/month</p>
+                <ul>
+                    <li>Full gym access</li>
+                    <li>5 trainer sessions</li>
+                    <li>Group classes</li>
+                </ul>
+                <button onclick="goToPayment(2)" class="btn btn-warning">Subscribe</button>
+            </div>
+        </div>
+
+        <!-- Platinum Plan -->
+        <div class="col-md-4">
+            <div class="card p-3 shadow-sm membership-card" data-name="Platinum">
+                <h4>Platinum</h4>
+                <p>BDT1000/month</p>
+                <ul>
+                    <li>All Gold features</li>
+                    <li>Personal diet plan</li>
+                    <li>Unlimited trainer sessions</li>
+                </ul>
+                <button onclick="goToPayment(3)" class="btn btn-primary">Subscribe</button>
+            </div>
+        </div>
+    </div>
+
+    <script>
+        function goToPayment(membershipId) {
+            localStorage.setItem('selected_membership_id', membershipId);
+            window.location.href = "payment.html";
+        }
+
+        async function loadCurrentMembership() {
+            const token = localStorage.getItem('token');
+            const container = document.getElementById('current-membership');
+
+            if (!token) {
+                container.innerText = 'You are not logged in.';
+                disableSubscribeButtons(true);
+                return;
+            }
+
+            const res = await fetch("http://127.0.0.1:8000/api/my-membership", {
+                headers: {
+                    "Authorization": `Bearer ${token}`
+                }
+            });
+
+            const data = await res.json();
+
+            const allCards = document.querySelectorAll('.membership-card');
+            allCards.forEach(card => {
+                card.classList.remove('active');
+                const badge = card.querySelector('.badge-active');
+                if (badge) badge.remove();
+            });
+
+            if (data.membership) {
+                container.innerText = `Plan: ${data.membership.name} (${data.membership.price} BDT/month)`;
+                disableSubscribeButtons(true);
+
+                const activeCard = document.querySelector(`.membership-card[data-name="${data.membership.name}"]`);
+                if (activeCard) {
+                    activeCard.classList.add('active');
+                    const badge = document.createElement('span');
+                    badge.className = 'badge-active';
+                    badge.innerText = 'Currently Active';
+                    activeCard.appendChild(badge);
+                }
+            } else {
+                container.innerText = 'No active membership.';
+                disableSubscribeButtons(false);
+            }
+        }
+
+        function disableSubscribeButtons(disable) {
+            const buttons = document.querySelectorAll('button.btn');
+            buttons.forEach(button => {
+                if (button.textContent.includes('Subscribe')) {
+                    button.disabled = disable;
+                    if (disable) {
+                        button.classList.add('disabled');
+                        button.title = "You already have a membership";
+                    } else {
+                        button.classList.remove('disabled');
+                        button.title = "";
+                    }
+                }
+            });
+        }
+
+        async function cancelMembership() {
+            const token = localStorage.getItem('token');
+            if (!token) {
+                alert("You must be logged in.");
+                return;
+            }
+
+            if (!confirm("Are you sure you want to cancel your membership?")) return;
+
+            const res = await fetch("http://127.0.0.1:8000/api/cancel-membership", {
+                method: "POST",
+                headers: {
+                    "Authorization": `Bearer ${token}`,
+                    "Content-Type": "application/json",
+                }
+            });
+
+            const data = await res.json();
+            alert(data.message);
+
+            if (res.ok) {
+                document.getElementById('current-membership').innerText = 'No active membership.';
+                disableSubscribeButtons(false);
+
+                // Remove active highlight and badge immediately
+                const allCards = document.querySelectorAll('.membership-card');
+                allCards.forEach(card => {
+                    card.classList.remove('active');
+                    const badge = card.querySelector('.badge-active');
+                    if (badge) badge.remove();
+                });
+            }
+        }
+
+        loadCurrentMembership();
+    </script>
+
+</body>
+</html>

@@ -1,0 +1,133 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8" />
+  <title>Update Profile</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body { background-color: #f8f9fa; }
+    .container { max-width: 500px; margin-top: 40px; padding: 20px; background: white; border-radius: 10px; box-shadow: 0px 0px 10px rgba(0,0,0,0.1); }
+  </style>
+</head>
+<body>
+
+<div class="container">
+  <h2 class="mb-4 text-center">Update Profile</h2>
+
+  <div id="alert" class="alert alert-danger d-none" role="alert"></div>
+  <div id="success" class="alert alert-success d-none" role="alert">Profile updated successfully!</div>
+
+  <form id="profile-form">
+    <div class="mb-3">
+      <label for="name" class="form-label">Full Name</label>
+      <input type="text" class="form-control" id="name" required />
+    </div>
+    <div class="mb-3">
+      <label for="phone" class="form-label">Phone</label>
+      <input type="text" class="form-control" id="phone" required />
+    </div>
+    <div class="mb-3">
+      <label for="age" class="form-label">Age</label>
+      <input type="number" class="form-control" id="age" required />
+    </div>
+    <div class="mb-3">
+      <label for="height" class="form-label">Height (cm)</label>
+      <input type="number" class="form-control" id="height" required />
+    </div>
+    <div class="mb-3">
+      <label for="weight" class="form-label">Weight (kg)</label>
+      <input type="number" class="form-control" id="weight" required />
+    </div>
+    <div class="mb-3">
+      <label for="goal" class="form-label">Fitness Goal</label>
+      <input type="text" class="form-control" id="goal" required />
+    </div>
+    <div class="mb-3">
+      <label for="bmi" class="form-label">BMI (Auto)</label>
+      <input type="text" class="form-control" id="bmi" readonly />
+    </div>
+    <div class="mb-3">
+      <label for="bmiCategory" class="form-label">BMI Category</label>
+      <input type="text" class="form-control" id="bmiCategory" readonly />
+    </div>
+    <button type="submit" class="btn btn-primary w-100">Save Profile</button>
+  </form>
+</div>
+
+<script>
+  const form = document.getElementById("profile-form");
+  const alertBox = document.getElementById("alert");
+  const successBox = document.getElementById("success");
+
+  const token = localStorage.getItem("token");
+  if (!token) {
+    alert("You must log in first.");
+    window.location.href = "login.html";
+  }
+
+  // Auto-update BMI when height/weight change
+  form.addEventListener("input", () => {
+    const height = parseFloat(document.getElementById("height").value);
+    const weight = parseFloat(document.getElementById("weight").value);
+
+    if (height && weight) {
+      const h = height / 100;
+      const bmi = weight / (h * h);
+      const rounded = Math.round(bmi * 100) / 100;
+
+      document.getElementById("bmi").value = rounded;
+
+      const category = bmi < 18.5 ? "Underweight"
+                     : bmi < 24.9 ? "Normal weight"
+                     : bmi < 29.9 ? "Overweight"
+                     : "Obese";
+      document.getElementById("bmiCategory").value = category;
+    }
+  });
+
+  form.addEventListener("submit", async function (e) {
+    e.preventDefault();
+    alertBox.classList.add("d-none");
+    successBox.classList.add("d-none");
+
+    const payload = {
+      name: document.getElementById("name").value,
+      phone: document.getElementById("phone").value,
+      age: document.getElementById("age").value,
+      height: document.getElementById("height").value,
+      weight: document.getElementById("weight").value,
+      goal: document.getElementById("goal").value,
+      bmi: document.getElementById("bmi").value,
+      bmi_category: document.getElementById("bmiCategory").value,
+    };
+
+    try {
+      const res = await fetch("http://127.0.0.1:8000/api/update_profile", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "Accept": "application/json",
+          "Authorization": "Bearer " + token,
+        },
+        body: JSON.stringify(payload)
+      });
+
+      const data = await res.json();
+
+      if (res.ok) {
+        successBox.classList.remove("d-none");
+        form.reset();
+      } else {
+        alertBox.textContent = data.message || "Failed to update profile.";
+        alertBox.classList.remove("d-none");
+      }
+    } catch (err) {
+      alertBox.textContent = "Server error. Try again later.";
+      alertBox.classList.remove("d-none");
+      console.error(err);
+    }
+  });
+</script>
+
+</body>
+</html>

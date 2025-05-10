@@ -1,0 +1,73 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>User Dashboard</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet" />
+  <style>
+    body { background-color: #f4f4f4; }
+    .card { max-width: 600px; margin: 50px auto; }
+  </style>
+</head>
+<body>
+
+<div class="card">
+  <div class="card-header bg-primary text-white">
+    <h4 class="mb-0">My Profile</h4>
+  </div>
+  <div class="card-body">
+    <ul class="list-group" id="profile-list">
+      <li class="list-group-item"><strong>Name:</strong> <span id="name"></span></li>
+      <li class="list-group-item"><strong>Phone:</strong> <span id="phone"></span></li>
+      <li class="list-group-item"><strong>Age:</strong> <span id="age"></span></li>
+      <li class="list-group-item"><strong>Height:</strong> <span id="height"></span> cm</li>
+      <li class="list-group-item"><strong>Weight:</strong> <span id="weight"></span> kg</li>
+      <li class="list-group-item"><strong>Goal:</strong> <span id="goal"></span></li>
+      <li class="list-group-item"><strong>BMI:</strong> <span id="bmi"></span></li>
+      <li class="list-group-item"><strong>BMI Category:</strong> <span id="bmi_category"></span></li>
+    </ul>
+  </div>
+</div>
+
+<script>
+  const token = localStorage.getItem("token");
+
+  if (!token) {
+    alert("You must be logged in.");
+    window.location.href = "login.html";
+  }
+
+  async function loadProfile() {
+    try {
+      const res = await fetch("http://127.0.0.1:8000/api/get_profile", {
+        headers: {
+          "Authorization": "Bearer " + token,
+          "Accept": "application/json"
+        }
+      });
+
+      const profile = await res.json();
+
+      if (!res.ok) throw new Error("Failed to load profile");
+
+      // Populate UI
+      document.getElementById("name").textContent = profile.name || "-";
+      document.getElementById("phone").textContent = profile.phone || "-";
+      document.getElementById("age").textContent = profile.age || "-";
+      document.getElementById("height").textContent = profile.height || "-";
+      document.getElementById("weight").textContent = profile.weight || "-";
+      document.getElementById("goal").textContent = profile.goal || "-";
+      document.getElementById("bmi").textContent = profile.bmi || "-";
+      document.getElementById("bmi_category").textContent = profile.bmi_category || "-";
+
+    } catch (err) {
+      console.error(err);
+      alert("Error fetching profile data.");
+    }
+  }
+
+  loadProfile();
+</script>
+
+</body>
+</html>

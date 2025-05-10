@@ -1,0 +1,109 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="UTF-8">
+  <title>Choose Premium Trainer</title>
+  <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-4">
+
+<div class="container">
+  <h3 class="mb-4">Select a Premium Trainer</h3>
+  <div id="trainer-alert" class="alert d-none"></div>
+
+  <select id="trainer-select" class="form-select mb-3"></select>
+  <button class="btn btn-primary" onclick="selectTrainer()">Save Trainer</button>
+
+  <h5 class="mt-5">Current Selected Trainer:</h5>
+  <div id="selected-trainer">Loading...</div>
+</div>
+
+<script>
+const token = localStorage.getItem('token');
+
+async function fetchPremiumTrainers() {
+  const res = await fetch("http://127.0.0.1:8000/api/premium-trainers", {
+    headers: { "Authorization": `Bearer ${token}` }
+  });
+  const trainers = await res.json();
+  const select = document.getElementById('trainer-select');
+  select.innerHTML = '<option value="">-- Choose a Trainer --</option>';
+  trainers.forEach(t => {
+    select.innerHTML += `<option value="${t.id}">${t.name} (${t.specialty})</option>`;
+  });
+}
+
+async function fetchCurrentTrainer() {
+  const res = await fetch("http://127.0.0.1:8000/api/user-trainer", {
+    headers: { "Authorization": `Bearer ${token}` }
+  });
+  const trainer = await res.json();
+  const container = document.getElementById('selected-trainer');
+  const select = document.getElementById('trainer-select');
+
+  if (trainer?.name) {
+    container.innerHTML = `
+      ${trainer.name} (${trainer.specialty})
+      <button class="btn btn-danger btn-sm ms-3" onclick="cancelTrainer()">Cancel Trainer</button>
+    `;
+    select.disabled = true; // disable dropdown
+  } else {
+    container.textContent = "No trainer selected yet.";
+    select.disabled = false;
+  }
+}
+
+async function selectTrainer() {
+  const id = document.getElementById("trainer-select").value;
+  const alert = document.getElementById("trainer-alert");
+  if (!id) return showAlert("Please select a trainer", "warning");
+
+  const res = await fetch("http://127.0.0.1:8000/api/select-trainer", {
+    method: "POST",
+    headers: {
+      "Content-Type": "application/json",
+      "Authorization": `Bearer ${token}`,
+    },
+    body: JSON.stringify({ trainer_id: id }),
+  });
+
+  const data = await res.json();
+  if (res.ok) {
+    showAlert(data.message, "success");
+    fetchCurrentTrainer();
+  } else {
+    showAlert(data.message || "Failed to select trainer", "danger");
+  }
+}
+
+async function cancelTrainer() {
+  const res = await fetch("http://127.0.0.1:8000/api/cancel-trainer", {
+    method: "POST",
+    headers: {
+      "Authorization": `Bearer ${token}`
+    }
+  });
+
+  const data = await res.json();
+  if (res.ok) {
+    showAlert(data.message, "success");
+    fetchCurrentTrainer();
+  } else {
+    showAlert(data.message || "Could not cancel trainer", "danger");
+  }
+}
+
+
+function showAlert(msg, type) {
+  const alert = document.getElementById("trainer-alert");
+  alert.textContent = msg;
+  alert.className = `alert alert-${type}`;
+  alert.classList.remove("d-none");
+}
+
+fetchPremiumTrainers();
+fetchCurrentTrainer();
+</script>
+
+</body>
+</html>

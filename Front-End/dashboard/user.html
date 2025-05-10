@@ -1,0 +1,180 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>User Fitness Dashboard</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="bg-gray-100">
+
+    <!-- Sidebar -->
+    <div class="flex">
+        <nav class="w-64 bg-green-900 text-white min-h-screen p-5">
+            <h2 class="text-2xl font-bold">User Dashboard</h2>
+            <ul class="mt-5 space-y-4">
+                <li><a href="#" class="block py-2 px-3 rounded hover:bg-green-700">Overview</a></li>
+                <li><a href="#" class="block py-2 px-3 rounded hover:bg-green-700">Workout Routine</a></li>
+                <li><a href="../user/view.html" class="block py-2 px-3 rounded hover:bg-green-700">Profile</a></li>
+                <li><a href="../user/profile.html" class="block py-2 px-3 rounded hover:bg-green-700">Update Profile</a></li>
+                <li><a href="../Session Management/seminar.html" class="block py-2 px-3 rounded hover:bg-green-700">Book a Session</a></li>
+                <li><a href="../user/premium_trainer.html" class="block py-2 px-3 rounded hover:bg-green-700">Premium Trainer</a></li>
+                <li><a href="../user/membership.html" class="block py-2 px-3 rounded hover:bg-green-700">Membership</a></li>
+                <li><a href="#" class="block py-2 px-3 rounded hover:bg-green-700">Progress Tracking</a></li>
+                <li><a href="#" class="block py-2 px-3 rounded hover:bg-green-700">Reviews</a></li>
+                <li><a href="#" class="block py-2 px-3 rounded hover:bg-green-700">Community</a></li>
+                <li><a href="#" class="block py-2 px-3 rounded hover:bg-green-700">Store</a></li>
+                <li><a href="#" class="block py-2 px-3 rounded hover:bg-green-700">Nutrition Plan</a></li>
+                <li><a href="#" class="block py-2 px-3 rounded hover:bg-green-700">Find a Gym</a></li>
+                <li><a href="#" class="block py-2 px-3 rounded hover:bg-green-700">Live Chat</a></li>
+                <li><a href="../user/change_password.html" class="block py-2 px-3 rounded hover:bg-green-700">Change Password</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="flex-1 p-6">
+            <h1 class="text-3xl font-semibold">Welcome, User!</h1>
+
+            <!-- Overview Cards -->
+            <div class="grid grid-cols-3 gap-6 mt-6">
+                <div class="bg-white p-5 rounded shadow-md">
+                    <h3 class="text-lg font-bold">Total Workouts</h3>
+                    <p class="text-2xl font-semibold" id="totalWorkouts">18</p>
+                </div>
+                <div class="bg-white p-5 rounded shadow-md">
+                    <h3 class="text-lg font-bold">Booked Sessions</h3>
+                    <p class="text-2xl font-semibold" id="bookedSessions">4</p>
+                </div>
+                <div class="bg-white p-5 rounded shadow-md">
+                    <h3 class="text-lg font-bold">Calories Burned</h3>
+                    <p class="text-2xl font-semibold" id="caloriesBurned">2,800 kcal</p>
+                </div>
+            </div>
+
+            <!-- Premium Trainer Info -->
+            <div class="mt-8">
+                <h2 class="text-2xl font-bold">Your Premium Trainer</h2>
+                <div id="trainer-info" class="bg-white p-5 rounded shadow-md">
+                    <p>Loading trainer info...</p>
+                </div>
+            </div>
+
+            <!-- Workout Routine -->
+            <div class="mt-8">
+                <h2 class="text-2xl font-bold">Workout Routine</h2>
+                <div class="bg-white p-5 rounded shadow-md">
+                    <p>Today's AI-powered workout: <strong>Full Body HIIT</strong> <button class="bg-blue-600 text-white px-3 py-1 rounded">View</button></p>
+                </div>
+            </div>
+
+            <!-- Progress Tracking -->
+            <div class="mt-8">
+                <h2 class="text-2xl font-bold">Activity Progress</h2>
+                <div class="bg-white p-5 rounded shadow-md">
+                    <canvas id="progressChart"></canvas>
+                </div>
+            </div>
+
+            <!-- Trainer Reviews -->
+            <div class="mt-8">
+                <h2 class="text-2xl font-bold">Trainer Reviews</h2>
+                <div class="bg-white p-5 rounded shadow-md">
+                    <p>Rate your trainer: ⭐⭐⭐⭐⭐</p>
+                    <button class="bg-yellow-500 text-white px-3 py-1 rounded">Submit</button>
+                </div>
+            </div>
+
+            <!-- Community -->
+            <div class="mt-8">
+                <h2 class="text-2xl font-bold">Community Forum</h2>
+                <div class="bg-white p-5 rounded shadow-md">
+                    <p>Join the latest discussions about fitness tips and motivation! <button class="bg-blue-600 text-white px-3 py-1 rounded">Join</button></p>
+                </div>
+            </div>
+
+            <!-- Store -->
+            <div class="mt-8">
+                <h2 class="text-2xl font-bold">Fitness Store</h2>
+                <div class="bg-white p-5 rounded shadow-md">
+                    <p>Buy supplements, workout gear, and gym memberships! <button class="bg-green-600 text-white px-3 py-1 rounded">Shop Now</button></p>
+                </div>
+            </div>
+
+            <!-- Nutrition -->
+            <div class="mt-8">
+                <h2 class="text-2xl font-bold">Diet & Nutrition Plan</h2>
+                <div class="bg-white p-5 rounded shadow-md">
+                    <p>AI recommends a <strong>High-Protein Meal Plan</strong>. <button class="bg-blue-600 text-white px-3 py-1 rounded">View Plan</button></p>
+                </div>
+            </div>
+
+            <!-- Gym Search -->
+            <div class="mt-8">
+                <h2 class="text-2xl font-bold">Find a Gym or Trainer</h2>
+                <div class="bg-white p-5 rounded shadow-md">
+                    <p>Use our interactive map to find the best gyms and trainers near you! <button class="bg-red-600 text-white px-3 py-1 rounded">Search</button></p>
+                </div>
+            </div>
+
+            <!-- Live Chat -->
+            <div class="mt-8">
+                <h2 class="text-2xl font-bold">Live Chat</h2>
+                <div class="bg-white p-5 rounded shadow-md">
+                    <p>Chat with a trainer or AI for fitness guidance. <button class="bg-purple-600 text-white px-3 py-1 rounded">Start Chat</button></p>
+                </div>
+            </div>
+
+        </main>
+    </div>
+
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <script>
+        // Chart.js Example
+        const ctx = document.getElementById('progressChart').getContext('2d');
+        new Chart(ctx, {
+            type: 'line',
+            data: {
+                labels: ['Week 1', 'Week 2', 'Week 3', 'Week 4'],
+                datasets: [{
+                    label: 'Progress',
+                    data: [20, 45, 60, 80],
+                    borderColor: 'blue',
+                    fill: false
+                }]
+            }
+        });
+
+        const token = localStorage.getItem("token");
+
+        // Load trainer info
+        async function loadPremiumTrainer() {
+            const container = document.getElementById("trainer-info");
+            try {
+                const res = await fetch("http://127.0.0.1:8000/api/user-trainer", {
+                    headers: { Authorization: `Bearer ${token}` },
+                });
+
+                if (!res.ok) throw new Error("No trainer selected");
+
+                const trainer = await res.json();
+                if (trainer && trainer.name) {
+                    container.innerHTML = `
+                        <p><strong>Name:</strong> ${trainer.name}</p>
+                        <p><strong>Specialty:</strong> ${trainer.specialty}</p>
+                    `;
+                } else {
+                    container.innerHTML = "<p>No premium trainer selected.</p>";
+                }
+            } catch (err) {
+                container.innerHTML = "<p>No premium trainer selected.</p>";
+            }
+        }
+
+        
+
+        loadPremiumTrainer();
+    </script>
+
+</body>
+</html>

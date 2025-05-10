@@ -1,0 +1,115 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Payment</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+</head>
+<body class="p-5">
+    <h2>Select Payment Method</h2>
+
+    <form id="payment-form">
+        <div class="mb-3">
+            <select id="payment-method" class="form-select" required>
+                <option value="">Select Method</option>
+                <option value="bank">Bank Transfer</option>
+                <option value="card">Card Payment</option>
+                <option value="mobile">Mobile Banking</option>
+            </select>
+        </div>
+
+        <div id="payment-fields"></div>
+
+        <button type="submit" class="btn btn-primary">Pay & Subscribe</button>
+    </form>
+
+    <script>
+        const methodSelect = document.getElementById('payment-method');
+        const fieldsContainer = document.getElementById('payment-fields');
+    
+        methodSelect.addEventListener('change', function () {
+            const method = this.value;
+            let fields = '';
+    
+            if (method === 'bank' || method === 'card') {
+                fields = `
+                    <div class="mb-3">
+                        <label class="form-label">Bank Name</label>
+                        <input type="text" name="bank_name" class="form-control" required>
+                    </div>
+                    <div class="mb-3">
+                        <label class="form-label">Account/Card Number</label>
+                        <input type="text" name="account_number" class="form-control" required>
+                    </div>
+                `;
+            } else if (method === 'mobile') {
+                fields = `
+                    <div class="mb-3">
+                        <label class="form-label">Mobile Number</label>
+                        <input type="text" name="mobile_number" class="form-control" required>
+                    </div>
+                `;
+            }
+    
+            fieldsContainer.innerHTML = fields;
+        });
+    
+        document.getElementById('payment-form').addEventListener('submit', async function (e) {
+            e.preventDefault();
+
+    const membershipId = localStorage.getItem('selected_membership_id');
+    const token = localStorage.getItem('token');
+    const method = document.getElementById('payment-method').value;
+
+    if (!membershipId || !token || !method) {
+        alert('Missing required data.');
+        return;
+    }
+
+    // 🔒 Check if user already has an active membership
+    const membershipRes = await fetch("http://127.0.0.1:8000/api/my-membership", {
+        headers: {
+            "Authorization": `Bearer ${token}`
+        }
+    });
+
+    const membershipData = await membershipRes.json();
+    if (membershipData.membership) {
+        alert("You already have an active membership. Please cancel it before subscribing again.");
+        return;
+    }
+
+    // Proceed with payment
+    let payload = {
+        membership_id: membershipId,
+        method: method
+    };
+
+    if (method === 'bank' || method === 'card') {
+        payload.bank_name = document.querySelector('input[name="bank_name"]').value;
+        payload.account_number = document.querySelector('input[name="account_number"]').value;
+    } else if (method === 'mobile') {
+        payload.mobile_number = document.querySelector('input[name="mobile_number"]').value;
+    }
+
+    const res = await fetch("http://127.0.0.1:8000/api/subscribe-membership", {
+        method: "POST",
+        headers: {
+            "Authorization": `Bearer ${token}`,
+            "Content-Type": "application/json",
+        },
+        body: JSON.stringify(payload)
+    });
+
+    const data = await res.json();
+    alert(data.message);
+
+    if (res.ok) {
+        window.location.href = "../dashboard/user.html";
+    }
+});
+
+    </script>
+    
+</body>
+</html>
