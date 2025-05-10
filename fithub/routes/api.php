@@ -32,9 +32,14 @@ Route::post('/checkout', [OrderController::class, 'placeOrder']);  // Place an o
 // Order Item Routes
 Route::post('/order-items', [OrderItemController::class, 'store']);  // Add an item to the order_items table
 
-// Complaints Routes (NEW ROUTES)
-Route::get('/complaints', [ComplaintController::class, 'index']);  // To fetch all complaints
-Route::post('/complaints', [ComplaintController::class, 'store']);  // To create a new complaint
+// Fetch all complaints
+Route::get('complaints', [ComplaintController::class, 'index']);
+
+// Submit a complaint
+Route::post('complaints', [ComplaintController::class, 'store']);
+
+// Resolve a complaint
+Route::put('complaints/{id}/resolve', [ComplaintController::class, 'resolve']);
 
 // Authenticated routes (Sanctum Authentication)
 Route::middleware('auth:sanctum')->group(function () {
