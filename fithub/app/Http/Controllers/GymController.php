@@ -7,16 +7,16 @@ use Illuminate\Http\Request;
 
 class GymController extends Controller
 {
-    //
+    //find users location using ip address
     public function findNearestGyms(Request $request)
     {
-        $ip = request()->ip();
+        $ip = request()->ip();      // Get the IP address from the request
 
         // Check for proxies or load balancers
         if (request()->server('HTTP_X_FORWARDED_FOR')) {
-            $ip = explode(',', request()->server('HTTP_X_FORWARDED_FOR'))[0];
+            $ip = explode(',', request()->server('HTTP_X_FORWARDED_FOR'))[0];       // If so, take the first IP from the list
         }
-    
+        // Call the IP geolocation API to get latitude and longitude based on IP
         $url = "http://ip-api.com/json/$ip";
 
         $locationData = json_decode(file_get_contents($url), true);
@@ -32,10 +32,11 @@ class GymController extends Controller
             ], 400);
         }
     }
-
+    // close gym    
     private function searchNearestGyms($latitude, $longitude)
     {
         $radius = 4;
+           // Use the Haversine formula to calculate the distance between the user's location and each gym
         $gyms = Gym::selectRaw(
             "
         id, name, address, latitude, longitude,
@@ -44,8 +45,8 @@ class GymController extends Controller
         * sin(radians(latitude)))) AS distance",
             [$latitude, $longitude, $latitude]
         )
-            ->having("distance", "<", $radius)
-            ->orderBy("distance")
+            ->having("distance", "<", $radius)      // Filter gyms within the specified radius
+            ->orderBy("distance")                   // Order results by distance (nearest first)
             ->get();
         if ($gyms->isEmpty()) {
             return response()->json(['message' => 'No gyms found within the specified radius.'], 404);

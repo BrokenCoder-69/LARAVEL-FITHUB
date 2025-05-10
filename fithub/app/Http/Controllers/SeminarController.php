@@ -8,9 +8,13 @@ use Illuminate\Http\Request;
 use Illuminate\Support\Facades\Auth;
 
 class SeminarController extends Controller
-{
+{   
+
+    //Book a seminar appointment by a user.
     public function book(Request $request){
         $user_id = Auth::id();
+
+        // Create new seminar
         $appointment = Seminar::create([
             'user_id' => $user_id, // client
             'trainer_id' => $request->trainer_id,
@@ -25,6 +29,8 @@ class SeminarController extends Controller
         return response()->json($appointment);
     }
 
+    // Get all accepted seminar bookings for the logged-in trainer.
+
     public function trainer_index(Request $request)
     {
         $user_id = Auth::id();
@@ -32,6 +38,7 @@ class SeminarController extends Controller
         return response()->json($appointments, 200);
     }
     
+    //  Get all seminar bookings by the authenticated user (client).
 
     public function user_index(Request $request)
     {
@@ -49,6 +56,8 @@ class SeminarController extends Controller
         return response()->json($appointment, 200);
     }
 
+
+    // Accept a seminar appointment by its ID.
     public function seminar_accept($id)
     {
         $appointment = Seminar::find($id);

@@ -9,11 +9,17 @@ use Illuminate\Support\Facades\Auth;
 
 class UserController extends Controller
 {
+
+
+    // Display a listing of all regular users
     public function index(Request $request)
     {
         $users = User::where('role','user')->orderBy('created_at', 'desc')->get();
         return response()->json($users, 200);
     }
+
+
+    //Display the specified user by ID.
 
     public function show($id)
     {
@@ -23,6 +29,9 @@ class UserController extends Controller
         }
         return response()->json($user, 200);
     }
+
+
+    
     public function update(Request $request, $id)
     {
         $user = User::find($id);
@@ -32,6 +41,10 @@ class UserController extends Controller
         $user->update($request->all());
         return response()->json($user, 200);
     }
+
+
+
+
     public function destroy($id)
     {
         $user = User::find($id);
@@ -42,6 +55,9 @@ class UserController extends Controller
         $user->delete();
         return response()->json(['message' => 'User deleted successfully'], 200);
     }
+
+
+    //Get all seminars booked by the currently authenticated user.
 
     public function seminar(){
         $user_id = Auth::id();
