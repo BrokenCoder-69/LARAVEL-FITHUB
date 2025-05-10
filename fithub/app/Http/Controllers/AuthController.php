@@ -37,7 +37,7 @@ class AuthController extends Controller
             'password' => Hash::make($request->password),
             'role' => $request->role,
         ]);
-
+        // Generating a token
         $token = $user->createToken('auth_token')->plainTextToken;
         return response()->json(['token' => $token, 'user' => $user]);
     }
@@ -54,13 +54,14 @@ class AuthController extends Controller
             'email' => 'required|string|email',
             'password' => 'required|string',
         ]);
-
+        //  Trainer needs to be approved 1st by the admin. 2 status - pending and approved
         $user = User::where('email', $request->email)->first();
         if ($user->status == 'pending' && $user->role == 'trainer') {
             return response()->json([
                 'message' => 'Try again later'
             ], 403);
         }
+        // Generating a token
         if (!$user || !Hash::check($request->password, $user->password)) {
             throw ValidationException::withMessages(['email' => 'Invalid credentials']);
         }
