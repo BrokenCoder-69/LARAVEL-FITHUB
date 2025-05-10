@@ -27,7 +27,7 @@ class AuthController extends Controller
             return response()->json([
                 'message' => 'Validation failed',
                 'errors' => $validator->errors()
-            ], 422);
+            ], 422);                        //unable to process the request
         }
 
         // If validation passes, create the user
