@@ -9,97 +9,46 @@
         body {
             background-color: #f8f9fa;
         }
-        .post-details-container {
+        .post-detail-container {
             max-width: 800px;
             margin: 50px auto;
-            padding: 20px;
             background: white;
-            border-radius: 10px;
-            box-shadow: 0px 0px 10px rgba(0, 0, 0, 0.1);
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 0 10px rgba(0, 0, 0, 0.1);
         }
     </style>
 </head>
 <body>
 
-<div class="post-details-container">
-    <h1>Post Details</h1>
-    
-    <div id="post-details">
-        <!-- Post details will be loaded here -->
-    </div>
-    
-    <h2>Comments</h2>
-    <ul id="comments-list">
-        <!-- Comments will be displayed here -->
-    </ul>
-
-    <h3>Leave a Comment</h3>
-    <form id="comment-form">
-        <textarea id="comment-content" name="content" rows="4" required class="form-control"></textarea><br><br>
-        <button type="submit" class="btn btn-primary">Post Comment</button>
-    </form>
+<div class="post-detail-container">
+    <h2 id="post-title" class="text-center mb-3">Post Title</h2>
+    <p id="post-content">Post content will be displayed here.</p>
+    <a href="view_posts.html" class="btn btn-secondary">Back to Posts</a>
 </div>
 
-<script src="https://cdn.jsdelivr.net/npm/axios/dist/axios.min.js"></script>
 <script>
-    // Get the post ID from the URL
-    const urlParams = new URLSearchParams(window.location.search);
-    const postId = urlParams.get('id');
+    async function fetchPostDetails() {
+        const urlParams = new URLSearchParams(window.location.search);
+        const postId = urlParams.get('id');
 
-    // Fetch the post details from the API
-    axios.get(`/api/community-posts/${postId}`)
-        .then(function (response) {
-            const post = response.data;
-            const postDetails = document.getElementById('post-details');
-            postDetails.innerHTML = `
-                <h3>${post.title}</h3>
-                <p>${post.content}</p>
-            `;
-        })
-        .catch(function (error) {
-            console.error('Error fetching post:', error);
-        });
+        try {
+            const response = await fetch(`http://127.0.0.1:8000/api/community-posts/${postId}`);
+            const data = await response.json();
 
-    // Fetch the comments for this post
-    axios.get(`/api/post-comments?post_id=${postId}`)
-        .then(function (response) {
-            const comments = response.data;
-            const commentsList = document.getElementById('comments-list');
-            
-            comments.forEach(function(comment) {
-                const commentElement = document.createElement('li');
-                commentElement.classList.add('list-group-item');
-                commentElement.innerHTML = `
-                    <p>${comment.comment}</p>
-                    <small>By User ${comment.user_id}</small>
-                `;
-                commentsList.appendChild(commentElement);
-            });
-        })
-        .catch(function (error) {
-            console.error('Error fetching comments:', error);
-        });
+            if (response.ok) {
+                document.getElementById('post-title').textContent = data.post.title;
+                document.getElementById('post-content').textContent = data.post.content;
+            } else {
+                document.getElementById('post-title').textContent = 'Post not found';
+                document.getElementById('post-content').textContent = 'This post no longer exists.';
+            }
+        } catch (error) {
+            console.error('Error fetching post details:', error);
+        }
+    }
 
-    // Handle comment form submission
-    document.getElementById('comment-form').addEventListener('submit', function (e) {
-        e.preventDefault();
-        
-        const content = document.getElementById('comment-content').value;
-
-        // Send a POST request to add a new comment
-        axios.post('/api/post-comments', {
-            post_id: postId,
-            content: content,
-            user_id: 1  // Replace with actual user_id from session
-        })
-        .then(function (response) {
-            alert('Comment added successfully!');
-            window.location.reload();  // Reload the page to show the new comment
-        })
-        .catch(function (error) {
-            console.error('Error adding comment:', error);
-        });
-    });
+    fetchPostDetails();
 </script>
 
 </body>

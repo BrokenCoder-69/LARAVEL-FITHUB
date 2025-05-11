@@ -1,9 +1,8 @@
 <?php
-
 namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
-use App\Models\CommunityPost;  // Ensure you have this model
+use App\Models\CommunityPost;
 
 class CommunityPostController extends Controller
 {
@@ -16,7 +15,7 @@ class CommunityPostController extends Controller
         $validatedData = $request->validate([
             'title' => 'required|string|max:255',
             'content' => 'required|string',
-            'user_id' => 'required|integer',  // Ensure you pass a valid user_id
+            'user_id' => 'required|integer|exists:users,id',  // Ensure user_id exists in users table
         ]);
 
         // Create a new post using the validated data
@@ -31,5 +30,16 @@ class CommunityPostController extends Controller
             'message' => 'Post created successfully!',
             'post' => $post
         ], 201);  // 201 status code means resource created successfully
+    }
+
+    /**
+     * Fetch all community posts.
+     */
+    public function index()
+    {
+        $posts = CommunityPost::all();  // Get all posts from the database
+        return response()->json([
+            'posts' => $posts
+        ]);
     }
 }
