@@ -1,0 +1,113 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>All Complaints</title>
+    <style>
+        body {
+            font-family: Arial, sans-serif;
+            margin: 0;
+            padding: 0;
+            display: flex;
+            justify-content: center;
+            align-items: center;
+            height: 100vh;
+            background-color: #f4f4f4;
+        }
+        .container {
+            background-color: white;
+            padding: 20px;
+            border-radius: 8px;
+            box-shadow: 0 4px 8px rgba(0, 0, 0, 0.1);
+            width: 800px;
+        }
+        h2 {
+            text-align: center;
+        }
+        .complaint-item {
+            padding: 10px;
+            background-color: #f9f9f9;
+            margin-bottom: 10px;
+            border: 1px solid #ddd;
+            border-radius: 4px;
+        }
+        button {
+            background-color: #4CAF50;
+            color: white;
+            padding: 5px 10px;
+            border: none;
+            border-radius: 4px;
+            cursor: pointer;
+        }
+        button:hover {
+            background-color: #45a049;
+        }
+        .resolve-btn {
+            background-color: #ff9800;
+        }
+    </style>
+</head>
+<body>
+
+    <div class="container">
+        <h2>All Complaints</h2>
+        <div id="complaint-list-container"></div>
+
+        <br>
+        <a href="complaints.html">Back to Complaint Submission</a>
+    </div>
+
+    <script>
+        const apiUrl = 'http://localhost:8000/api/complaints';
+
+        // Load all complaints (admin view)
+        function loadComplaints() {
+            fetch(apiUrl)
+                .then(response => response.json())
+                .then(complaints => {
+                    const complaintListContainer = document.getElementById('complaint-list-container');
+                    complaintListContainer.innerHTML = ''; // Clear previous complaints
+
+                    complaints.forEach(complaint => {
+                        const complaintDiv = document.createElement('div');
+                        complaintDiv.className = 'complaint-item';
+                        complaintDiv.innerHTML = `
+                            <p><strong>Complaint:</strong> ${complaint.complaint}</p>
+                            <p><strong>Status:</strong> ${complaint.status}</p>
+                            ${complaint.status === 'pending' ? 
+                                `<button class="resolve-btn" onclick="resolveComplaint(${complaint.id})">Resolve</button>` 
+                                : ''
+                            }
+                        `;
+                        complaintListContainer.appendChild(complaintDiv);
+                    });
+                })
+                .catch(error => {
+                    console.error('Error:', error);
+                    alert('There was an error loading complaints');
+                });
+        }
+
+        // Resolve a complaint function
+        function resolveComplaint(complaintId) {
+            fetch(`${apiUrl}/${complaintId}/resolve`, {
+                method: 'PUT',
+            })
+            .then(response => response.json())
+            .then(result => {
+                alert('Complaint resolved');
+                loadComplaints(); // Reload the complaints list after resolving
+            })
+            .catch(error => {
+                console.error('Error:', error);
+                alert('There was an error resolving the complaint');
+            });
+        }
+
+        // Load complaints on page load
+        window.onload = loadComplaints;
+    </script>
+
+</body>
+</html>

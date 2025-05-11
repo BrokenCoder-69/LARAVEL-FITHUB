@@ -1,0 +1,94 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Shopping Cart - Fitness Store</title>
+    <link href="https://cdn.jsdelivr.net/npm/bootstrap@5.3.0/dist/css/bootstrap.min.css" rel="stylesheet">
+    <link rel="stylesheet" href="style.css">  <!-- Link to custom CSS -->
+</head>
+<body class="bg-gray-100">
+
+    <!-- Sidebar -->
+    <div class="flex">
+        <nav class="sidebar text-white min-h-screen p-5 w-64 bg-green-900">
+            <h2 class="text-2xl font-bold mb-6">Fitness Store</h2>
+            <ul class="mt-5 space-y-4">
+                <li><a href="products.html" class="block py-2 px-3 rounded hover:bg-green-700">All Products</a></li>
+                <li><a href="cart.html" class="block py-2 px-3 rounded hover:bg-green-700">Cart</a></li>
+                <li><a href="checkout.html" class="block py-2 px-3 rounded hover:bg-green-700">Checkout</a></li>
+            </ul>
+        </nav>
+
+        <!-- Main Content -->
+        <main class="content p-6 flex-1">
+            <h1 class="text-3xl font-semibold">Your Cart</h1>
+
+            <div id="cart-items" class="mb-4">
+                <!-- Cart items will be dynamically injected here -->
+            </div>
+
+            <div class="mt-3">
+                <h3>Total: <span id="total-price">$0.00</span></h3>
+                <button class="btn btn-success w-100" onclick="checkout()">Proceed to Checkout</button>
+            </div>
+        </main>
+    </div>
+
+    <script>
+        // Retrieve cart data from localStorage (or initialize an empty array if not found)
+        let cart = JSON.parse(localStorage.getItem('cart')) || []; 
+
+        // Display the cart items in the cart page
+        function displayCartItems() {
+            const cartItemsContainer = document.getElementById('cart-items');
+            cartItemsContainer.innerHTML = '';  // Clear current items
+
+            let totalPrice = 0;
+
+            // Loop through the cart to display each item
+            cart.forEach((product, index) => {
+                const productPrice = parseFloat(product.price.replace('$', '')); // Remove dollar sign and convert to number
+                const productTotal = productPrice * product.quantity; // Total for this product
+
+                totalPrice += productTotal;  // Update the total price
+
+                const cartItem = `
+                    <div class="card mb-2">
+                        <div class="card-body">
+                            <h5 class="card-title">${product.name}</h5>
+                            <p class="card-text">$${product.price} x ${product.quantity} = $${productTotal.toFixed(2)}</p>
+                            <button class="btn btn-danger" onclick="removeFromCart(${index})">Remove</button>
+                        </div>
+                    </div>
+                `;
+                cartItemsContainer.innerHTML += cartItem;
+            });
+
+            // Update total price on the page
+            document.getElementById('total-price').textContent = `$${totalPrice.toFixed(2)}`;
+        }
+
+        // Remove a product from the cart
+        function removeFromCart(index) {
+            cart.splice(index, 1);  // Remove item at the specified index
+            localStorage.setItem('cart', JSON.stringify(cart));  // Save updated cart to localStorage
+            displayCartItems();  // Re-render the cart
+        }
+
+        // Checkout function (Simulate proceeding to checkout)
+        function checkout() {
+            if (cart.length === 0) {
+                alert('Your cart is empty! Add some products first.');
+                return;
+            }
+            // Redirect to the checkout page (In a real app, you’d send the cart data to the backend)
+            window.location.href = 'checkout.html';
+        }
+
+        // Display the cart items when the page loads
+        window.onload = displayCartItems;
+    </script>
+
+</body>
+</html>

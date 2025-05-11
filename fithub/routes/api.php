@@ -11,7 +11,11 @@ use App\Http\Controllers\TrainerController;
 use App\Http\Controllers\UserController;
 use App\Http\Middleware\AdminMiddleware;
 use App\Http\Middleware\TrainerMiddleware;
-
+use App\Http\Controllers\OrderController;
+use App\Http\Controllers\OrderItemController;
+use App\Http\Controllers\CommunityPostController;
+use App\Http\Controllers\ComplaintController; // Import the ComplaintController
+use App\Http\Controllers\ProductController;
 
 
 // User registration
@@ -153,6 +157,39 @@ Route::get('/trainers', [TrainerController::class, 'index']);
 
 
 
+####################rohan_code starts
+
+
+// Products Routes
+Route::get('/products', [ProductController::class, 'index']);  // Get all products
+Route::get('/products/{id}', [ProductController::class, 'show']);  // Get a specific product by ID
+
+// Community Posts Routes
+Route::get('/community-posts', [CommunityPostController::class, 'index']);  // Get all posts
+Route::get('/community-posts/{id}', [CommunityPostController::class, 'show']);  // Get a specific post by ID
+Route::post('/community-posts', [CommunityPostController::class, 'store']);  // Create a new post
+
+// Checkout and Order Routes
+Route::post('/checkout', [OrderController::class, 'placeOrder']);  // Place an order
+
+// Order Item Routes
+Route::post('/order-items', [OrderItemController::class, 'store']);  // Add an item to the order_items table
+
+
+
+
+// Fetch all complaints
+Route::get('complaints', [ComplaintController::class, 'index']);
+
+// Submit a complaint
+Route::post('complaints', [ComplaintController::class, 'store']);
+
+// Resolve a complaint
+Route::put('complaints/{id}/resolve', [ComplaintController::class, 'resolve']);
+
+
+
+##############rohan_code_ends 
 
 // Route::get('/user', function (Request $request) {
 //     return $request->user();
