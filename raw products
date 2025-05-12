@@ -1,0 +1,89 @@
+\App\Models\Product::create([
+    'name' => 'Smartwatch',
+    'description' => 'A stylish smartwatch with fitness tracking features.',
+    'price' => 199.99,
+    'category' => 'Wearables',
+    'image_url' => 'https://via.placeholder.com/150?text=Smartwatch',
+    'stock_quantity' => 50
+]);
+
+\App\Models\Product::create([
+    'name' => 'Wireless Earbuds',
+    'description' => 'High-quality wireless earbuds with noise cancellation.',
+    'price' => 129.99,
+    'category' => 'Audio',
+    'image_url' => 'https://via.placeholder.com/150?text=Wireless+Earbuds',
+    'stock_quantity' => 150
+]);
+
+\App\Models\Product::create([
+    'name' => 'Bluetooth Speaker',
+    'description' => 'Portable Bluetooth speaker with powerful sound.',
+    'price' => 59.99,
+    'category' => 'Audio',
+    'image_url' => 'https://via.placeholder.com/150?text=Bluetooth+Speaker',
+    'stock_quantity' => 80
+]);
+
+\App\Models\Product::create([
+    'name' => 'Laptop Stand',
+    'description' => 'Ergonomic laptop stand to improve posture.',
+    'price' => 24.99,
+    'category' => 'Accessories',
+    'image_url' => 'https://via.placeholder.com/150?text=Laptop+Stand',
+    'stock_quantity' => 200
+]);
+
+\App\Models\Product::create([
+    'name' => 'Portable Charger',
+    'description' => 'Compact portable charger for on-the-go power.',
+    'price' => 29.99,
+    'category' => 'Accessories',
+    'image_url' => 'https://via.placeholder.com/150?text=Portable+Charger',
+    'stock_quantity' => 120
+]);
+
+\App\Models\Product::create([
+    'name' => 'Waterproof Jacket',
+    'description' => 'Durable waterproof jacket for rainy days.',
+    'price' => 49.99,
+    'category' => 'Clothing',
+    'image_url' => 'https://via.placeholder.com/150?text=Waterproof+Jacket',
+    'stock_quantity' => 75
+]);
+
+\App\Models\Product::create([
+    'name' => 'Running Shoes',
+    'description' => 'Lightweight running shoes for comfort and performance.',
+    'price' => 89.99,
+    'category' => 'Footwear',
+    'image_url' => 'https://via.placeholder.com/150?text=Running+Shoes',
+    'stock_quantity' => 60
+]);
+
+\App\Models\Product::create([
+    'name' => 'Smart Light Bulb',
+    'description' => 'Control your home lighting remotely with this smart light bulb.',
+    'price' => 19.99,
+    'category' => 'Home Automation',
+    'image_url' => 'https://via.placeholder.com/150?text=Smart+Light+Bulb',
+    'stock_quantity' => 200
+]);
+
+\App\Models\Product::create([
+    'name' => 'Electric Kettle',
+    'description' => 'Fast boiling electric kettle with automatic shut-off.',
+    'price' => 34.99,
+    'category' => 'Home Appliances',
+    'image_url' => 'https://via.placeholder.com/150?text=Electric+Kettle',
+    'stock_quantity' => 90
+]);
+
+\App\Models\Product::create([
+    'name' => 'Fitness Tracker',
+    'description' => 'Track your workouts and health data with this fitness tracker.',
+    'price' => 39.99,
+    'category' => 'Wearables',
+    'image_url' => 'https://via.placeholder.com/150?text=Fitness+Tracker',
+    'stock_quantity' => 150
+]);
