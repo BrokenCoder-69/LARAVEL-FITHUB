@@ -1,3 +1,9 @@
+
+
+php artisan tinker
+
+
+
 \App\Models\Product::create([
     'name' => 'Smartwatch',
     'description' => 'A stylish smartwatch with fitness tracking features.',
